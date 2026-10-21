@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Caixa do Dia",
+    "slug": "caixa-do-dia",
+    "scheme": "caixadodia",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "com.caixadodia.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#FFC20E",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite"
+    ],
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c961d7f5-65c4-4618-a0b4-b880569ec378"
+      }
+    }
+  }
+}

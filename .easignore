@@ -1,0 +1,11 @@
+# Arquivos que NÃO vão para o build na nuvem (EAS Build)
+node_modules/
+.expo/
+dist/
+web-build/
+*.tsbuildinfo
+.env*.local
+
+# Skills do Claude Code: os atalhos (junctions) em .claude/skills quebram o envio no Windows (EPERM)
+.claude/
+.agents/
