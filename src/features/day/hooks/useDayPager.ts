@@ -1,10 +1,8 @@
-import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWindowDimensions } from 'react-native';
 import { Gesture } from 'react-native-gesture-handler';
 import { useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { listClosingDates } from '@/features/day/services';
 import type { DateKey } from '@/features/shared';
 import { motion } from '@/theme/motion';
 
@@ -15,36 +13,28 @@ const SWIPE_VELOCITY = 1000;
 const EDGE_RESISTANCE = 0.3;
 const MIN_SWIPE_DISTANCE = 40;
 
-const useDayPager = (initialDate: DateKey) => {
+const useDayPager = (initialDate: DateKey, pages: DateKey[]) => {
   const { width } = useWindowDimensions();
+  const initialIndex = Math.max(0, pages.indexOf(initialDate));
   const [date, setDate] = useState<DateKey>(initialDate);
   const dateRef = useRef<DateKey>(initialDate);
-  const [pages, setPages] = useState<DateKey[]>([initialDate]);
-  const translateX = useSharedValue(0);
+  const translateX = useSharedValue(-initialIndex * width);
   const swiping = useSharedValue(false);
   const swipeStart = useSharedValue(0);
-  const targetIndex = useSharedValue(0);
+  const targetIndex = useSharedValue(initialIndex);
 
   const index = Math.max(0, pages.indexOf(date));
   const maxIndex = pages.length - 1;
 
-  useFocusEffect(
-    useCallback(() => {
-      listClosingDates()
-        .then((list) => {
-          const merged = list.includes(initialDate) ? list : [...list, initialDate].sort();
-          setPages(merged);
-          const at = Math.max(0, merged.indexOf(dateRef.current));
-          targetIndex.set(at);
-          translateX.set(-at * width);
-        })
-        .catch(() => undefined);
-    }, [initialDate, translateX, targetIndex, width]),
-  );
-
   useEffect(() => {
     dateRef.current = date;
   }, [date]);
+
+  useEffect(() => {
+    const at = Math.max(0, pages.indexOf(dateRef.current));
+    targetIndex.set(at);
+    translateX.set(-at * width);
+  }, [pages, width, targetIndex, translateX]);
 
   const goToIndex = useCallback(
     (target: number) => {
@@ -53,9 +43,22 @@ const useDayPager = (initialDate: DateKey) => {
       if (!targetDate) return;
       setDate(targetDate);
       targetIndex.set(clamped);
-      translateX.set(withTiming(-clamped * width, { duration: motion.slideMs, easing: motion.easeOut }));
+      const isFarJump = Math.abs(clamped - index) > 1;
+      translateX.set(
+        isFarJump
+          ? -clamped * width
+          : withTiming(-clamped * width, { duration: motion.slideMs, easing: motion.easeOut }),
+      );
     },
-    [pages, maxIndex, width, translateX, targetIndex],
+    [pages, maxIndex, index, width, translateX, targetIndex],
+  );
+
+  const goToDate = useCallback(
+    (target: DateKey) => {
+      const at = pages.indexOf(target);
+      if (at >= 0) goToIndex(at);
+    },
+    [pages, goToIndex],
   );
 
   const swipe = useMemo(
@@ -109,7 +112,7 @@ const useDayPager = (initialDate: DateKey) => {
     [pages, maxIndex, width, translateX, swiping, swipeStart, targetIndex],
   );
 
-  return { pages, index, maxIndex, swipe, translateX, swiping, goToIndex };
+  return { index, maxIndex, swipe, translateX, swiping, goToIndex, goToDate };
 };
 
 export default useDayPager;

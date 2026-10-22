@@ -6,6 +6,5 @@ export {
   EditOpeningCashScreen,
   EditItemScreen,
   CloseDayScreen,
-  TodayScreen,
-  LaunchDayScreen,
+  CashScreen,
 } from './views';

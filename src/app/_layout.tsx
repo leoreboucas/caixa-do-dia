@@ -37,10 +37,6 @@ const RootLayout = () => {
             options={{ title: 'Caixa Inicial', presentation: 'modal' }}
           />
           <Stack.Screen name="edit-item" options={{ title: 'Editar compra', presentation: 'modal' }} />
-          <Stack.Screen
-            name="launch-day"
-            options={{ title: 'Lançar dia esquecido', presentation: 'modal' }}
-          />
           <Stack.Screen name="product" options={{ title: 'Produto', presentation: 'modal' }} />
         </Stack>
       </SafeAreaProvider>

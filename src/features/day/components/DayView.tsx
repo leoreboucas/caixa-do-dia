@@ -24,32 +24,34 @@ interface DayViewProps {
   date: DateKey;
   closing: ClosingWithItems;
   currentCosts: Record<number, number>;
-  onCancelled: () => void;
+  onRemoved: () => void;
 }
 
-const DayView = ({ date, closing, currentCosts, onCancelled }: DayViewProps) => {
+const DayView = ({ date, closing, currentCosts, onRemoved }: DayViewProps) => {
   const summary = summarizeClosing(closing);
   const isOpen = closing.status === ClosingStatus.OPEN;
   const params = { date };
   const editOpening = () => router.push({ pathname: '/edit-opening-cash', params });
 
-  const confirmCancel = () => {
-    Alert.alert(
-      'Cancelar lançamento?',
-      `O dia ${formatDateKeyBR(date)} e as compras lançadas nele serão removidos.`,
-      [
-        { text: 'Voltar', style: 'cancel' },
-        {
-          text: 'Cancelar lançamento',
-          style: 'destructive',
-          onPress: () => {
-            deleteClosing(closing.id)
-              .then(onCancelled)
-              .catch(() => Alert.alert('Não foi possível cancelar', 'Tente novamente.'));
-          },
+  const removeLabel = isOpen ? 'Cancelar lançamento' : 'Excluir caixa';
+
+  const confirmRemove = () => {
+    const message = isOpen
+      ? `O dia ${formatDateKeyBR(date)} e as compras lançadas nele serão removidos.`
+      : `O caixa de ${formatDateKeyBR(date)} será apagado por completo: Caixa Inicial, compras e Caixa Final. Essa ação não pode ser desfeita.`;
+
+    Alert.alert(`${removeLabel}?`, message, [
+      { text: 'Voltar', style: 'cancel' },
+      {
+        text: removeLabel,
+        style: 'destructive',
+        onPress: () => {
+          deleteClosing(closing.id)
+            .then(onRemoved)
+            .catch(() => Alert.alert('Não foi possível remover', 'Tente novamente.'));
         },
-      ],
-    );
+      },
+    ]);
   };
 
   return (
@@ -144,7 +146,11 @@ const DayView = ({ date, closing, currentCosts, onCancelled }: DayViewProps) => 
           variant={isOpen ? 'primary' : 'secondary'}
           onPress={() => router.push({ pathname: '/close-day', params })}
         />
-        {isOpen ? <Button label="Cancelar lançamento do dia" variant="text" onPress={confirmCancel} /> : null}
+        <Button
+          label={isOpen ? 'Cancelar lançamento do dia' : 'Excluir caixa'}
+          variant="text"
+          onPress={confirmRemove}
+        />
       </View>
     </>
   );

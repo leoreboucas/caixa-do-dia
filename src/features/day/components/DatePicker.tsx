@@ -17,10 +17,12 @@ const DatePicker = ({
   value,
   onChange,
   max,
+  min,
 }: {
   value: DateKey;
   onChange: (date: DateKey) => void;
   max: DateKey;
+  min?: DateKey;
 }) => {
   const [calendarOpen, setCalendarOpen] = useState(false);
   const isIOS = process.env.EXPO_OS === 'ios';
@@ -30,7 +32,8 @@ const DatePicker = ({
 
   function pick(date: Date) {
     const key = toDateKey(date);
-    onChange(key > max ? max : key);
+    const clamped = key > max ? max : key;
+    onChange(min && clamped < min ? min : clamped);
     setCalendarOpen(false);
   }
 
@@ -43,6 +46,7 @@ const DatePicker = ({
         nextLabel="Próximo dia"
         onPrev={() => onChange(addDays(value, -1))}
         onNext={() => onChange(addDays(value, 1))}
+        prevDisabled={!!min && value <= min}
         nextDisabled={value >= max}
         onPressCenter={() => setCalendarOpen((open) => !open)}
         centerHint="Toque para escolher a data no calendário"
@@ -56,6 +60,7 @@ const DatePicker = ({
               mode="date"
               display="inline"
               maximumDate={maxDate}
+              minimumDate={min ? parseDateKey(min) : undefined}
               accentColor={colors.primary}
               locale="pt_BR"
               themeVariant="light"
@@ -71,6 +76,7 @@ const DatePicker = ({
           mode="date"
           presentation="dialog"
           maximumDate={maxDate}
+          minimumDate={min ? parseDateKey(min) : undefined}
           accentColor={colors.primary}
           onValueChange={(_event, date) => pick(date)}
           onDismiss={() => setCalendarOpen(false)}

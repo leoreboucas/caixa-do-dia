@@ -1,7 +1,9 @@
+export { default as CashDay } from './CashDay';
 export { default as DatePicker } from './DatePicker';
 export { default as DayContent } from './DayContent';
 export { default as DayHeader } from './DayHeader';
 export { default as DayItemsList } from './DayItemsList';
+export { default as DayPager } from './DayPager';
 export { default as DayPane } from './DayPane';
 export { default as DayView } from './DayView';
 export { default as EditChip } from './EditChip';

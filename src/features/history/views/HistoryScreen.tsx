@@ -3,7 +3,6 @@ import { useCallback, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import {
   addDays,
-  Button,
   Card,
   ClosingStatus,
   formatBRL,
@@ -80,9 +79,7 @@ const HistoryScreen = () => {
     return (
       <StateMessage
         title="Histórico vazio"
-        description="Os dias fechados aparecem aqui, com Bruto, Despesas e Líquido. Para registrar um dia anterior, use Lançar dia esquecido."
-        actionLabel="Lançar dia esquecido"
-        onAction={() => router.push('/launch-day')}
+        description="Os dias fechados aparecem aqui, com Bruto, Despesas e Líquido. Para lançar um caixa, use a aba Caixa."
       />
     );
   }
@@ -128,8 +125,6 @@ const HistoryScreen = () => {
           );
         })}
       </Card>
-
-      <Button label="Lançar dia esquecido" variant="secondary" onPress={() => router.push('/launch-day')} />
     </ScrollView>
   );
 };

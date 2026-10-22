@@ -31,18 +31,13 @@ const DayContent = ({ date }: { date: DateKey }) => {
   if (!closing) {
     return (
       <View style={styles.state}>
-        <StateMessage
-          title="Dia não lançado"
-          description="Informe o Caixa Inicial para lançar este dia."
-          actionLabel="Lançar dia"
-          onAction={() => router.replace({ pathname: '/launch-day', params: { date } })}
-        />
+        <StateMessage title="Dia não lançado" description="Este dia não tem caixa lançado." />
       </View>
     );
   }
 
   return (
-    <DayView date={date} closing={closing} currentCosts={currentCosts} onCancelled={() => router.back()} />
+    <DayView date={date} closing={closing} currentCosts={currentCosts} onRemoved={() => router.back()} />
   );
 };
 

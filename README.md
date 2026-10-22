@@ -27,7 +27,9 @@ O app é só mobile (Android/iOS); o SQLite não é suportado na web.
 
 ## Como o app pensa
 
-O centro do app é o **lançamento do dia**, feito no fim do dia, não a venda individual:
+O centro do app é o **lançamento do caixa de um dia**, não a venda individual. A aba Caixa mostra a data do caixa
+em destaque: o padrão é ontem (quem fecha o caixa no dia seguinte já abre no dia certo), e as setas ou o calendário
+trocam para qualquer outro dia, inclusive hoje:
 
 1. **Caixa Inicial:** o dinheiro com que o dia começou.
 2. **Compras:** os produtos comprados, com quantidade e custo.
@@ -57,13 +59,13 @@ O Caixa Inicial não é receita, e as compras não saem da conta do Caixa Final:
 ```
 src/
 ├── app/                      rotas do expo-router: só layouts e arquivos finos que reexportam a tela
-│   ├── (tabs)/               abas: (today), (products), (history), (reports)
+│   ├── (tabs)/               abas: (cash), (products), (history), (reports)
 │   ├── add-purchase.tsx, close-day.tsx, edit-item.tsx, edit-opening-cash.tsx,
-│   │   launch-day.tsx, product.tsx, day/[date].tsx
+│   │   product.tsx, day/[date].tsx
 │   └── _layout.tsx
 ├── db/                       schema.ts (Drizzle), client.ts, testClient.ts, migrations/
 ├── features/
-│   ├── day/                  lançamento do dia (Hoje, detalhe do dia, compras, caixa)
+│   ├── day/                  lançamento do dia (aba Caixa, detalhe do dia, compras, caixa)
 │   ├── products/             cadastro de produtos
 │   ├── history/              lista de dias lançados
 │   ├── reports/              relatórios por mês e de todos os meses
@@ -108,7 +110,7 @@ Elas são conferidas pelo ESLint (`npm run lint:check`) sempre que possível.
 - **Constantes:** `UPPER_CASE` só para valor simples e imutável; objetos e listas em camelCase; o objeto que
   funciona como enum, em PascalCase. A constante fica no módulo a que pertence.
 - **Telas:** uma tela de rota vive em `features/<feature>/views/<Nome>Screen.tsx`, e o arquivo em `src/app`
-  só reexporta (`export { TodayScreen as default } from '@/features/day';`).
+  só reexporta (`export { CashScreen as default } from '@/features/day';`).
 - **Textos exibidos** usam os termos do negócio com inicial maiúscula: Caixa Inicial, Caixa Final, Venda Total, Bruto,
   Despesas, Líquido.
 - **Testes** ficam ao lado do arquivo testado, com as fases Arrange/Act/Assert separadas por uma linha em branco.

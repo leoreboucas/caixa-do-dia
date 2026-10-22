@@ -4,9 +4,9 @@ import { colors } from '@/theme';
 const TabsLayout = () => {
   return (
     <NativeTabs tintColor={colors.primary} backgroundColor={colors.surface}>
-      <NativeTabs.Trigger name="(today)">
-        <NativeTabs.Trigger.Icon sf={{ default: 'sun.max', selected: 'sun.max.fill' }} md="wb_sunny" />
-        <NativeTabs.Trigger.Label>Hoje</NativeTabs.Trigger.Label>
+      <NativeTabs.Trigger name="(cash)">
+        <NativeTabs.Trigger.Icon sf={{ default: 'banknote', selected: 'banknote.fill' }} md="payments" />
+        <NativeTabs.Trigger.Label>Caixa</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="(products)">
         <NativeTabs.Trigger.Icon
