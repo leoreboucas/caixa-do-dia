@@ -7,6 +7,7 @@ import { useDayPager, usePullToClose } from '@/features/day/hooks';
 import { Text, type DateKey } from '@/features/shared';
 import { colors, fontSize, spacing } from '@/theme';
 import { motion } from '@/theme/motion';
+import CalculatorButton from './CalculatorButton';
 import DayPane from './DayPane';
 
 interface PagerPage {
@@ -53,13 +54,16 @@ const DayPager = ({ pages, initialDate, closeOnPull = false, renderPage }: DayPa
 
   return (
     <View style={styles.clip}>
+      <Stack.Screen
+        options={{
+          animation: closeOnPull && closing ? 'fade' : 'default',
+          headerRight: () => <CalculatorButton date={pages[index] ?? initialDate} />,
+        }}
+      />
       {closeOnPull ? (
-        <>
-          <Stack.Screen options={{ animation: closing ? 'fade' : 'default' }} />
-          <Animated.View pointerEvents="none" style={[styles.hint, hintStyle]}>
-            <Text style={styles.hintText}>Puxe para voltar ao Histórico</Text>
-          </Animated.View>
-        </>
+        <Animated.View pointerEvents="none" style={[styles.hint, hintStyle]}>
+          <Text style={styles.hintText}>Puxe para voltar ao Histórico</Text>
+        </Animated.View>
       ) : null}
       <GestureDetector gesture={swipe}>
         <Animated.View style={[styles.fill, slideStyle]}>

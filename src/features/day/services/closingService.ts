@@ -77,6 +77,16 @@ export async function closeDay(closingId: number, values: CloseDayValues): Promi
     .where(eq(dailyClosings.id, closingId));
 }
 
+export async function setFinalCash(date: DateKey, finalCash: number): Promise<void> {
+  const closing = await getClosingByDate(date);
+  if (!closing) throw new Error('Lance o Caixa Inicial deste dia antes de definir o Caixa Final.');
+
+  const grossSalesCents = grossFromFinalCashCents(finalCash, closing.openingCashCents);
+  if (grossSalesCents < 0) throw new Error('O Caixa Final não pode ser menor que o Caixa Inicial.');
+
+  await closeDay(closing.id, { grossSalesCents, note: closing.note });
+}
+
 export async function deleteClosing(closingId: number): Promise<void> {
   await db.delete(dailyClosings).where(eq(dailyClosings.id, closingId));
 }

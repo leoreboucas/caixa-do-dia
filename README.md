@@ -59,14 +59,16 @@ O Caixa Inicial não é receita, e as compras não saem da conta do Caixa Final:
 ```
 src/
 ├── app/                      rotas do expo-router: só layouts e arquivos finos que reexportam a tela
-│   ├── (tabs)/               abas: (cash), (products), (history), (reports)
-│   ├── add-purchase.tsx, close-day.tsx, edit-item.tsx, edit-opening-cash.tsx,
+│   ├── (tabs)/               abas: (cash), (products), (history), (reports), (backup)
+│   ├── add-purchase.tsx, calculator.tsx, close-day.tsx, edit-item.tsx, edit-opening-cash.tsx,
 │   │   product.tsx, day/[date].tsx
 │   └── _layout.tsx
 ├── db/                       schema.ts (Drizzle), client.ts, testClient.ts, migrations/
 ├── features/
 │   ├── day/                  lançamento do dia (aba Caixa, detalhe do dia, compras, caixa)
 │   ├── products/             cadastro de produtos
+│   ├── calculator/           calculadora de lançamentos editáveis; o resultado vira o Caixa Final do dia
+│   ├── backup/               backup automático no Google Drive (login, envio, restauração)
 │   ├── history/              lista de dias lançados
 │   ├── reports/              relatórios por mês e de todos os meses
 │   └── shared/               o que não tem dono: componentes, hooks, utils, validators, definitions
@@ -115,7 +117,23 @@ Elas são conferidas pelo ESLint (`npm run lint:check`) sempre que possível.
   Despesas, Líquido.
 - **Testes** ficam ao lado do arquivo testado, com as fases Arrange/Act/Assert separadas por uma linha em branco.
 
-## Backup (ainda não implementado)
+## Backup no Google Drive
 
-Sem backup, trocar de celular apaga tudo. Sugestão: exportar o arquivo `caixa-do-dia.db`
-(ou CSV) pelo menu de compartilhar do sistema, com `expo-file-system` + `expo-sharing`.
+A aba Backup liga a conta Google do usuário e guarda os dados na pasta privada do app no Drive
+(`drive.appdata`, que o usuário nem vê no Drive e que só este app acessa). Depois de conectar, o backup é
+automático: cada mudança no banco agenda um envio 20 segundos depois, e se falhar (sem internet, por exemplo)
+ele é refeito na próxima abertura do app. "Restaurar" substitui os dados do aparelho pelos do último backup.
+
+Funciona só no app instalado no Android (`.apk`). No Expo Go e no iOS a aba mostra "Backup indisponível",
+porque o login do Google usa código nativo e o iOS ainda não tem um cliente OAuth configurado.
+
+As credenciais ficam no `.env` (copie de `.env.example`; o `.env` é ignorado pelo Git). Os IDs de cliente OAuth
+não são segredos, por isso usam o prefixo `EXPO_PUBLIC_`:
+
+```
+EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=...      cliente "Web" (usado como webClientId do login)
+EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID=...  cliente "Android" (pacote com.caixadodia.app + SHA-1 da keystore do EAS)
+```
+
+Para o build incluir o `.env`, rode o EAS com `EAS_NO_VCS=1` (ou cadastre as variáveis no EAS). Na tela de
+consentimento do Google Cloud, publique o app (status "Em produção"), senão o login expira a cada 7 dias.

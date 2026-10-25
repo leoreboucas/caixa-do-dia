@@ -1,4 +1,4 @@
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs } from 'expo-router/native-tabs';
 import { colors } from '@/theme';
 
 const TabsLayout = () => {
@@ -22,6 +22,10 @@ const TabsLayout = () => {
       <NativeTabs.Trigger name="(reports)">
         <NativeTabs.Trigger.Icon sf="chart.bar" md="bar_chart" />
         <NativeTabs.Trigger.Label>Relatórios</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="(backup)">
+        <NativeTabs.Trigger.Icon sf={{ default: 'icloud', selected: 'icloud.fill' }} md="cloud" />
+        <NativeTabs.Trigger.Label>Backup</NativeTabs.Trigger.Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );

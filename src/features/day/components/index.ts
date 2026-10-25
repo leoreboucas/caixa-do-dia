@@ -1,3 +1,4 @@
+export { default as CalculatorButton } from './CalculatorButton';
 export { default as CashDay } from './CashDay';
 export { default as DatePicker } from './DatePicker';
 export { default as DayContent } from './DayContent';

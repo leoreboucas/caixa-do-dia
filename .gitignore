@@ -43,3 +43,6 @@ yarn-error.*
 # Skills do Claude Code (instaladas com `npx skills add`; os atalhos em .claude/skills quebram o EAS Build no Windows)
 .claude/skills/
 .agents/
+
+# secrets and local configuration
+.env

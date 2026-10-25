@@ -138,6 +138,39 @@ describe('fechamento do dia', () => {
     const orphans = sqlite.prepare('SELECT COUNT(*) AS n FROM closing_items').get() as { n: number };
     expect(orphans.n).toBe(0);
   });
+
+  it('definir o Caixa Final fecha o dia e calcula a venda total', async () => {
+    const day = await closings.openDay({ date: '2026-10-20', openingCashCents: 8000 });
+
+    await closings.setFinalCash('2026-10-20', 40000);
+
+    const saved = await closings.getClosingByDate('2026-10-20');
+    expect(saved).toMatchObject({ id: day.id, status: 'closed', grossSalesCents: 32000 });
+    expect(summarizeClosing(saved!).finalCashCents).toBe(40000);
+  });
+
+  it('definir o Caixa Final mantém a observação de um dia já fechado', async () => {
+    const day = await closings.openDay({ date: '2026-10-20', openingCashCents: 8000 });
+    await closings.closeDay(day.id, { grossSalesCents: 1000, note: 'Dia de sol' });
+
+    await closings.setFinalCash('2026-10-20', 50000);
+
+    expect(await closings.getClosingByDate('2026-10-20')).toMatchObject({
+      grossSalesCents: 42000,
+      note: 'Dia de sol',
+    });
+  });
+
+  it('não deixa o Caixa Final ficar menor que o Caixa Inicial', async () => {
+    await closings.openDay({ date: '2026-10-20', openingCashCents: 8000 });
+
+    await expect(closings.setFinalCash('2026-10-20', 7999)).rejects.toThrow();
+    expect(await closings.getClosingByDate('2026-10-20')).toMatchObject({ status: 'open' });
+  });
+
+  it('não define o Caixa Final de um dia que não foi lançado', async () => {
+    await expect(closings.setFinalCash('2026-10-20', 10000)).rejects.toThrow();
+  });
 });
 
 describe('histórico e sugestão de caixa', () => {

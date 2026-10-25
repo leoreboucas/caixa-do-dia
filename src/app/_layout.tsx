@@ -4,6 +4,7 @@ import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useAutoBackup } from '@/features/backup';
 import { LoadingState, StateMessage } from '@/features/shared';
 import { db } from '@/db/client';
 import migrations from '@/db/migrations/migrations';
@@ -12,6 +13,7 @@ import { modalHeaderOptions } from '@/theme/navigation';
 
 const RootLayout = () => {
   const { success, error } = useMigrations(db, migrations);
+  useAutoBackup(success);
 
   if (error) {
     return <StateMessage title="Erro ao preparar o banco de dados" description={error.message} />;
@@ -37,6 +39,7 @@ const RootLayout = () => {
             options={{ title: 'Caixa Inicial', presentation: 'modal' }}
           />
           <Stack.Screen name="edit-item" options={{ title: 'Editar compra', presentation: 'modal' }} />
+          <Stack.Screen name="calculator" options={{ title: 'Calculadora', presentation: 'modal' }} />
           <Stack.Screen name="product" options={{ title: 'Produto', presentation: 'modal' }} />
         </Stack>
       </SafeAreaProvider>
